@@ -368,11 +368,19 @@ function parse_offer(SimpleXMLElement $o, string $commodity): ?array {
     $unitFee = 0.0;
     $bands = [];
     $green = 0;
+    // TIPOLOGIA 02 dovrebbe voler dire "facoltativa", ma molti venditori ci mettono la quota fissa o il prezzo
+    // stesso: si conta quando l'offerta non ha componenti 01 della stessa macroarea (non per le opzioni verdi)
+    $standard = [];
     foreach ($o->ComponenteImpresa as $c) {
-        if ((string) $c->TIPOLOGIA === '02') {
+        if ((string) $c->TIPOLOGIA !== '02') {
+            $standard[(string) $c->MACROAREA] = true;
+        }
+    }
+    foreach ($o->ComponenteImpresa as $c) {
+        $macro = (string) $c->MACROAREA;
+        if ((string) $c->TIPOLOGIA === '02' && (isset($standard[$macro]) || !in_array($macro, ['01', '02', '04'], true))) {
             continue; // componenti facoltative
         }
-        $macro = (string) $c->MACROAREA;
         $first = [];
         foreach ($c->IntervalloPrezzi as $ip) {
             $band = (string) ($ip->FASCIA_COMPONENTE ?? '') ?: '01';
@@ -410,13 +418,19 @@ function parse_offer(SimpleXMLElement $o, string $commodity): ?array {
     $discYear = 0.0;
     $discUnit = 0.0;
     $discCap = null;
+    $discPct = 0.0;
     foreach ($o->Sconto as $s) {
         if ((string) ($s->Condizione->CONDIZIONE_APPLICAZIONE ?? '') !== '00') {
             continue; // sconti con condizioni (domiciliazione, bolletta web...): fuori, come fa il Portale
         }
+        if ((string) $s->VALIDITA === '03') {
+            continue; // solo dopo i primi 12 mesi: il confronto è sul primo anno
+        }
         foreach ($s->PrezziSconto as $ps) {
             $u = (string) $ps->UNITA_MISURA;
-            if ($u === '01') {
+            if ($u === '06' && (string) $ps->TIPOLOGIA === '03') {
+                $discPct += (float) $ps->PREZZO; // % sul prezzo dell'energia/gas
+            } elseif ($u === '01') {
                 $discYear += (float) $ps->PREZZO;
             } elseif (in_array($u, ['03', '04'], true)) {
                 $discUnit += (float) $ps->PREZZO;
@@ -426,6 +440,13 @@ function parse_offer(SimpleXMLElement $o, string $commodity): ?array {
                 }
             }
         }
+    }
+    // lo sconto in % vale su tutto il prezzo: nelle variabili anche sull'indice, quindi sul suo coefficiente
+    $factor = 1 - min($discPct, 100.0) / 100;
+    [$p1, $p2, $p3] = [$p1 * $factor, $p2 * $factor, $p3 * $factor];
+    $coeff = (string) ($o->RiferimentiPrezzoEnergia->COEFFICIENTE ?? '') !== '' ? (float) $o->RiferimentiPrezzoEnergia->COEFFICIENTE : null;
+    if ($variable && $factor < 1) {
+        $coeff = ($coeff ?? 1.0) * $factor;
     }
     $zones = [];
     foreach ($o->ZoneOfferta as $zo) {
@@ -447,7 +468,7 @@ function parse_offer(SimpleXMLElement $o, string $commodity): ?array {
         'name' => mb_substr(trim((string) $d->NOME_OFFERTA), 0, 200),
         'price_type' => $variable ? 'variabile' : 'fisso',
         'idx' => $variable ? PO_IDX[$idxCode] : null,
-        'idx_coeff' => $variable && (string) ($o->RiferimentiPrezzoEnergia->COEFFICIENTE ?? '') !== '' ? (float) $o->RiferimentiPrezzoEnergia->COEFFICIENTE : null,
+        'idx_coeff' => $variable ? $coeff : null,
         'resident' => $resident,
         'fixed_year' => round($fixed, 2),
         'unit_fee' => $unitFee,
