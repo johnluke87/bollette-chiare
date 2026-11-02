@@ -4,7 +4,8 @@ declare(strict_types=1);
 // Confronto: quanto costerebbe in un anno la parte della bolletta che dipende dal venditore
 // (prezzo dell'energia/gas, quote fisse di vendita, sconti senza condizioni). Trasporto, oneri
 // di sistema e accise sono gli stessi con qualsiasi venditore, quindi non spostano il risparmio;
-// l'IVA invece sì e si aggiunge (luce 10%, gas 10% fino a 480 Smc l'anno e 22% oltre).
+// l'IVA invece sì e si aggiunge (luce 10%; gas 10% sui consumi fino a 480 Smc l'anno, 22% oltre
+// e sulla quota fissa, come nelle bollette).
 
 // Peso di ogni mese sul consumo dell'anno (gennaio...dicembre). Gas: riscaldamento d'inverno.
 const MONTH_WEIGHTS = [
@@ -83,12 +84,17 @@ function public_supply(array $s, array $bills): array {
     ];
 }
 
-function with_vat(string $commodity, float $cost, int $use): float {
-    if ($commodity === 'luce' || $use <= 480) {
+/** $fixed: la parte di $cost che è quota fissa (nel gas va al 22%). */
+function with_vat(string $commodity, float $cost, int $use, float $fixed = 0.0): float {
+    if ($commodity === 'luce') {
         return $cost * 1.10;
     }
-    $low = 480 / $use;
-    return $cost * ($low * 1.10 + (1 - $low) * 1.22);
+    $low = $use <= 480 ? 1.0 : 480 / $use;
+    return ($cost - $fixed) * ($low * 1.10 + (1 - $low) * 1.22) + $fixed * 1.22;
+}
+
+function fixed_part(array $o): float {
+    return (float) $o['fixed_year'] - (float) ($o['discount_year'] ?? 0);
 }
 
 /** Prezzo per unità (€/kWh o €/Smc) di un'offerta, fascia per fascia, con l'indice di oggi se è variabile. */
@@ -122,7 +128,7 @@ function current_cost(array $s, int $use, array $split, array $bills, array $par
             'price_type' => $variable ? 'variabile' : 'fisso', 'idx' => $s['commodity'] === 'luce' ? 'PUN' : 'PSV', 'idx_coeff' => null,
             'unit_fee' => 0, 'discount_unit' => 0, 'fixed_year' => $s['fixed_year'] ?? 0, 'discount_year' => 0,
         ];
-        return ['cost' => offer_cost($o, $s['commodity'], $use, $split, $par), 'how' => 'prezzi', 'fixed_known' => $s['fixed_year'] !== null];
+        return ['cost' => offer_cost($o, $s['commodity'], $use, $split, $par), 'fixed' => fixed_part($o), 'how' => 'prezzi', 'fixed_known' => $s['fixed_year'] !== null];
     }
     $cost = 0.0;
     $cons = 0.0;
@@ -200,12 +206,12 @@ function compare_supply(array $s, array $bills, int $limit = 40): array {
             'valid_to' => $o['valid_to'],
             'url' => $o['url'] ?: ($o['site'] ? 'https://' . preg_replace('#^https?://#', '', $o['site']) : null),
             'cost' => round($cost, 2),
-            'cost_vat' => round(with_vat($commodity, $cost, $use), 2),
+            'cost_vat' => round(with_vat($commodity, $cost, $use, fixed_part($o)), 2),
         ];
     }
     usort($list, fn($a, $b) => $a['cost'] <=> $b['cost']);
     $cur = current_cost($s, $use, $split, $bills, $par);
-    $curVat = $cur ? round(with_vat($commodity, $cur['cost'], $use), 2) : null;
+    $curVat = $cur ? round(with_vat($commodity, $cur['cost'], $use, $cur['fixed'] ?? 0.0), 2) : null;
     foreach ($list as &$x) {
         $x['saving'] = $curVat !== null ? round($curVat - $x['cost_vat']) : null;
     }
