@@ -1,0 +1,15 @@
+Enel Energia S.p.A. - Mercato libero dell'energia   Bolletta per la fornitura di energia elettrica
+Cliente: Mario Rossi  Indirizzo di fornitura: Via Roma 12, 31100 Treviso (TV)
+Codice POD IT001E12345678   Potenza impegnata 3 kW   Tipologia: Domestico residente
+Offerta: E-Light Luce  -  prezzo fisso per 12 mesi
+Periodo di fatturazione: dal 01/07/2026 al 31/08/2026
+Totale da pagare: 142,37 euro   Scadenza 20/09/2026
+SINTESI DEGLI IMPORTI FATTURATI
+Spesa per la materia energia 98,40 €
+Spesa per il trasporto e la gestione del contatore 21,15 €
+Spesa per oneri di sistema 6,30 €
+Imposte 4,58 €  IVA 10% 11,94 €
+CONSUMI FATTURATI: consumo effettivo rilevato  F1 142 kWh  F2 128 kWh  F3 160 kWh  Totale 430 kWh
+Consumo annuo (ultimi 12 mesi): 2.640 kWh
+DETTAGLIO: Quota energia F0 0,1690 €/kWh x 430 kWh = 72,67 €   Quota fissa vendita 12,00 €/mese x 2 mesi = 24,00 €   Dispacciamento 1,73 €
+Informazioni: per reclami scrivi a ... Lorem ipsum condizioni generali di fornitura. Il bonus sociale ... Le tue letture: lettura del 31/08/2026 12345.

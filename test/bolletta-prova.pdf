@@ -1,0 +1,48 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1307 >>
+stream
+BT /F1 9 Tf 40 800 Td 12 TL
+(Enel Energia S.p.A. - Mercato libero dell'energia   Bolletta per la fornitura di energia elettrica) Tj T*
+(Cliente: Mario Rossi  Indirizzo di fornitura: Via Roma 12, 31100 Treviso \(TV\)) Tj T*
+(Codice POD IT001E12345678   Potenza impegnata 3 kW   Tipologia: Domestico residente) Tj T*
+(Offerta: E-Light Luce  -  prezzo fisso per 12 mesi) Tj T*
+(Periodo di fatturazione: dal 01/07/2026 al 31/08/2026) Tj T*
+(Totale da pagare: 142,37 euro   Scadenza 20/09/2026) Tj T*
+(SINTESI DEGLI IMPORTI FATTURATI) Tj T*
+(Spesa per la materia energia 98,40 \342\202\254) Tj T*
+(Spesa per il trasporto e la gestione del contatore 21,15 \342\202\254) Tj T*
+(Spesa per oneri di sistema 6,30 \342\202\254) Tj T*
+(Imposte 4,58 \342\202\254  IVA 10% 11,94 \342\202\254) Tj T*
+(CONSUMI FATTURATI: consumo effettivo rilevato  F1 142 kWh  F2 128 kWh  F3 160 kWh  Totale 430 kWh) Tj T*
+(Consumo annuo \(ultimi 12 mesi\): 2.640 kWh) Tj T*
+(DETTAGLIO: Quota energia F0 0,1690 \342\202\254/kWh x 430 kWh = 72,67 \342\202\254   Quota fissa vendita 12,00 \342\202\254/mese x 2 mesi = 24,00 \342\202\254   Dispacciamento 1,73 \342\202\254) Tj T*
+(Informazioni: per reclami scrivi a ... Lorem ipsum condizioni generali di fornitura. Il bonus sociale ... Le tue letture: lettura del 31/08/2026 12345.) Tj T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001600 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1697
+%%EOF

@@ -1,0 +1,3 @@
+# Sorgenti: raggiungibili solo da questo PC (sviluppo). Online NON vanno caricati;
+# se finissero sul server per errore, nessuno da fuori potrebbe aprirli.
+Require local

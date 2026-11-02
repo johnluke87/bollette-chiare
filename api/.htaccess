@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+# dal web solo index.php: lib/, data/ (email in locale) e i config si includono soltanto
+RewriteRule ^(lib|data|cache)/ - [F,L]
+RewriteRule ^config(\.local)?\.php$ - [F,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L]
